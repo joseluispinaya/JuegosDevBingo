@@ -1,7 +1,15 @@
+using CapaData.Configuracion;
+using CapaData.Implementacion;
+using CapaData.Interfaces;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+builder.Services.Configure<ConnectionStrings>(builder.Configuration.GetSection("ConnectionStrings"));
+
+// Inyección de dependencias de Repositorios (Scoped)
+builder.Services.AddScoped<ITipoJuegoRepositorio, TipoJuegoRepositorio>();
 
 var app = builder.Build();
 
