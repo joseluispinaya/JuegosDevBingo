@@ -10,6 +10,8 @@ builder.Services.Configure<ConnectionStrings>(builder.Configuration.GetSection("
 
 // Inyección de dependencias de Repositorios (Scoped)
 builder.Services.AddScoped<ITipoJuegoRepositorio, TipoJuegoRepositorio>();
+builder.Services.AddScoped<IFiguraRepositorio, FiguraRepositorio>();
+//builder.Services.AddScoped<IFiguraRepositorio, FiguraRepositorio>();
 
 var app = builder.Build();
 

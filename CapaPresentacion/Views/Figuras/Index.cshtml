@@ -1,0 +1,225 @@
+﻿@{
+    ViewData["Title"] = "Figuras";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section Estilos {
+    <link href="~/assets/css/crearjugada.css" rel="stylesheet" />
+    <link href="~/assets/plugins/datatables.net-bs5/css/dataTables.bootstrap5.min.css" rel="stylesheet" />
+    <link href="~/assets/plugins/datatables.net-responsive-bs5/css/responsive.bootstrap5.min.css" rel="stylesheet" />
+}
+
+<div class="row">
+    <div class="col-xl-5">
+        <div class="panel panel-inverse">
+            <div class="panel-heading">
+                <h4 class="panel-title">Catálogo de Figuras</h4>
+                <div class="panel-heading-btn">
+                    <a href="javascript:;" class="btn btn-xs btn-icon btn-warning" data-toggle="panel-collapse">
+                        <i class="fa fa-minus"></i>
+                    </a>
+                </div>
+            </div>
+            <div class="panel-body">
+                <div class="p-3 bg-secondary bg-opacity-10 rounded-3 mb-3">
+                    <div class="d-flex align-items-center">
+                        <div class="w-50px h-50px d-flex align-items-center justify-content-center bg-primary bg-opacity-10 text-primary rounded-circle me-3 fs-24px shadow-sm">
+                            <i class="fas fa-filter"></i>
+                        </div>
+                        <div class="flex-fill">
+                            <h5 class="mb-1 fw-bold text-dark">Registro de jugadas</h5>
+                            <p class="mb-0 text-muted fs-13px">
+                                Seleccione el un tipo de jugada.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="d-flex justify-content-between align-items-center mb-4 border-bottom p-3">
+                    <h6 class="mb-0 fw-bold text-dark">
+                        <i class="fa fa-star text-warning me-1"></i>Figuras Registradas
+                    </h6>
+                    <button id="btnNuevoReg" type="button" class="btn btn-success btn-sm px-3 fw-bold rounded-pill d-flex align-items-center">
+                        <i class="fa fa-plus me-1"></i>Nueva Figura
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-7">
+        <div class="panel panel-inverse">
+            <div class="panel-heading">
+                <h4 class="panel-title">Catálogo de Figuras</h4>
+                <div class="panel-heading-btn">
+                    <a href="javascript:;" class="btn btn-xs btn-icon btn-warning" data-toggle="panel-collapse">
+                        <i class="fa fa-minus"></i>
+                    </a>
+                </div>
+            </div>
+            <div class="panel-body">
+                
+
+                <div class="table-responsive">
+                    <table id="tbData" width="100%" class="table table-hover table-striped table-bordered align-middle text-nowrap text-center mb-0">
+                        <!-- Columnas generadas por DataTables -->
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modalFigura" tabindex="-1" data-bs-backdrop="static">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-inverse text-white">
+                <h5 class="modal-title"><i class="fa fa-puzzle-piece me-2"></i>Diseñar Figura</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="txtIdFigura" value="0">
+
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold">Tipo de Juego</label>
+                        <select class="form-select" id="cboTipoJuego">
+                            <!-- Se llena por JS -->
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold">Nombre de la Figura</label>
+                        <input type="text" class="form-control" id="txtNombreFigura" placeholder="Ej: Diagonal Derecha">
+                    </div>
+                </div>
+
+                <hr />
+
+                <!-- PANEL 1: COORDENADAS (El cartón clásico) -->
+                <div id="panelCoordenadas" class="config-panel d-none text-center">
+                    
+                    <div class="carton d-inline-block text-start">
+                        <h6 class="text-center">Marcar Casillas</h6>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>B</th>
+                                    <th>I</th>
+                                    <th>N</th>
+                                    <th>G</th>
+                                    <th>O</th>
+                                </tr>
+                            </thead>
+                            <tbody id="bodyCartonBase">
+                                <!-- Filas de Checkboxes (B0 al O4, igual que tu diseño original) -->
+                                <tr>
+                                    <td><input class="form-check-input chk-coord" type="checkbox" data-col="B" data-row="0"></td>
+                                    <td><input class="form-check-input chk-coord" type="checkbox" data-col="I" data-row="0"></td>
+                                    <td><input class="form-check-input chk-coord" type="checkbox" data-col="N" data-row="0"></td>
+                                    <td><input class="form-check-input chk-coord" type="checkbox" data-col="G" data-row="0"></td>
+                                    <td><input class="form-check-input chk-coord" type="checkbox" data-col="O" data-row="0"></td>
+                                </tr>
+                                <tr>
+                                    <td><input class="form-check-input chk-coord" type="checkbox" data-col="B" data-row="1"></td>
+                                    <td><input class="form-check-input chk-coord" type="checkbox" data-col="I" data-row="1"></td>
+                                    <td><input class="form-check-input chk-coord" type="checkbox" data-col="N" data-row="1"></td>
+                                    <td><input class="form-check-input chk-coord" type="checkbox" data-col="G" data-row="1"></td>
+                                    <td><input class="form-check-input chk-coord" type="checkbox" data-col="O" data-row="1"></td>
+                                </tr>
+                                <tr>
+                                    <td><input class="form-check-input chk-coord" type="checkbox" data-col="B" data-row="2"></td>
+                                    <td><input class="form-check-input chk-coord" type="checkbox" data-col="I" data-row="2"></td>
+                                    <td class="text-center"><i class="fa fa-star text-warning fs-4"></i></td>
+                                    <td><input class="form-check-input chk-coord" type="checkbox" data-col="G" data-row="2"></td>
+                                    <td><input class="form-check-input chk-coord" type="checkbox" data-col="O" data-row="2"></td>
+                                </tr>
+                                <tr>
+                                    <td><input class="form-check-input chk-coord" type="checkbox" data-col="B" data-row="3"></td>
+                                    <td><input class="form-check-input chk-coord" type="checkbox" data-col="I" data-row="3"></td>
+                                    <td><input class="form-check-input chk-coord" type="checkbox" data-col="N" data-row="3"></td>
+                                    <td><input class="form-check-input chk-coord" type="checkbox" data-col="G" data-row="3"></td>
+                                    <td><input class="form-check-input chk-coord" type="checkbox" data-col="O" data-row="3"></td>
+                                </tr>
+                                <tr>
+                                    <td><input class="form-check-input chk-coord" type="checkbox" data-col="B" data-row="4"></td>
+                                    <td><input class="form-check-input chk-coord" type="checkbox" data-col="I" data-row="4"></td>
+                                    <td><input class="form-check-input chk-coord" type="checkbox" data-col="N" data-row="4"></td>
+                                    <td><input class="form-check-input chk-coord" type="checkbox" data-col="G" data-row="4"></td>
+                                    <td><input class="form-check-input chk-coord" type="checkbox" data-col="O" data-row="4"></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- PANEL 2: CONTEO -->
+                <div id="panelConteo" class="config-panel d-none">
+                    <div class="alert alert-info py-2"><i class="fa fa-info-circle"></i> Define cuántas bolillas en total se deben marcar para ganar.</div>
+                    <label class="form-label">Cantidad Objetivo:</label>
+                    <input type="number" class="form-control w-25" id="txtCantidadConteo" min="1" max="24" value="10">
+                </div>
+
+                <!-- PANEL 3: N_COLUMNAS -->
+                <div id="panelColumnas" class="config-panel d-none">
+                    <div class="alert alert-info py-2"><i class="fa fa-info-circle"></i> Selecciona qué columnas son válidas y cuántas debe completar el jugador.</div>
+                    <label class="form-label d-block">Columnas Válidas:</label>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input chk-columna" type="checkbox" value="B"> <label class="form-check-label">B</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input chk-columna" type="checkbox" value="I"> <label class="form-check-label">I</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input chk-columna" type="checkbox" value="N"> <label class="form-check-label">N</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input chk-columna" type="checkbox" value="G"> <label class="form-check-label">G</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input chk-columna" type="checkbox" value="O"> <label class="form-check-label">O</label>
+                    </div>
+
+                    <label class="form-label mt-3 d-block">Cantidad de columnas a completar:</label>
+                    <input type="number" class="form-control w-25" id="txtCantColumnas" min="1" max="5" value="1">
+                </div>
+
+                <!-- PANEL 4: N_FILAS -->
+                <div id="panelFilas" class="config-panel d-none">
+                    <div class="alert alert-info py-2"><i class="fa fa-info-circle"></i> Selecciona qué filas son válidas y cuántas debe completar el jugador.</div>
+                    <label class="form-label d-block">Filas Válidas:</label>
+                    <!-- Internamente son 0,1,2,3,4 pero visualmente mostramos Fila 1,2,3,4,5 para el usuario -->
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input chk-fila" type="checkbox" value="0"> <label class="form-check-label">Fila 1</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input chk-fila" type="checkbox" value="1"> <label class="form-check-label">Fila 2</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input chk-fila" type="checkbox" value="2"> <label class="form-check-label">Fila 3</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input chk-fila" type="checkbox" value="3"> <label class="form-check-label">Fila 4</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input chk-fila" type="checkbox" value="4"> <label class="form-check-label">Fila 5</label>
+                    </div>
+
+                    <label class="form-label mt-3 d-block">Cantidad de filas a completar:</label>
+                    <input type="number" class="form-control w-25" id="txtCantFilas" min="1" max="5" value="1">
+                </div>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cerrar</button>
+                <button type="button" id="btnGuardar" class="btn btn-success"><i class="fa fa-save me-1"></i>Guardar Figura</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/assets/plugins/datatables.net/js/dataTables.min.js"></script>
+    <script src="~/assets/plugins/datatables.net-bs5/js/dataTables.bootstrap5.min.js"></script>
+    <script src="~/assets/plugins/datatables.net-responsive/js/dataTables.responsive.min.js"></script>
+    <script src="~/assets/plugins/datatables.net-responsive-bs5/js/responsive.bootstrap5.min.js"></script>
+    <script src="~/js/FiguraIndex.js"></script>
+}

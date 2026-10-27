@@ -2,6 +2,7 @@
 using CapaData.Interfaces;
 using CapaEntidades;
 using CapaEntidades.Responses;
+using Dapper;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Options;
 using System.Data;
@@ -46,6 +47,40 @@ namespace CapaData.Implementacion
                             Nombre = dr["Nombre"].ToString()
                         });
                     }
+                }
+
+                rpt.Estado = true;
+                rpt.Mensaje = "Lista obtenida correctamente";
+            }
+            catch (Exception ex)
+            {
+                rpt.Estado = false;
+                rpt.Mensaje = $"Error en BD: {ex.Message}";
+            }
+
+            return rpt;
+        }
+
+        public async Task<Respuesta<List<TipoJuegos>>> ListaDapper()
+        {
+            Respuesta<List<TipoJuegos>> rpt = new()
+            {
+                Estado = false,
+                Mensaje = "Error desconocido",
+                Data = []
+            };
+
+            try
+            {
+                using (var conexion = new SqlConnection(con.CadenaSQL))
+                {
+                    // Dapper ejecuta el SP y mapea las columnas a las propiedades de TipoJuegos automáticamente
+                    var resultado = await conexion.QueryAsync<TipoJuegos>(
+                        "usp_ListaTipoJuegos",
+                        commandType: CommandType.StoredProcedure
+                    );
+                    //rpt.Data = resultado.ToList();
+                    rpt.Data = [.. resultado];
                 }
 
                 rpt.Estado = true;
