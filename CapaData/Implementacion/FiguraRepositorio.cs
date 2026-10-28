@@ -17,6 +17,101 @@ namespace CapaData.Implementacion
             con = options.Value;
         }
 
+        public async Task<Respuesta<int>> Editar(Figuras objeto)
+        {
+            Respuesta<int> response = new()
+            {
+                Estado = false,
+                Valor = "warning",
+                Data = 0,
+                Mensaje = "Error desconocido"
+            };
+
+            try
+            {
+                using (var conexion = new SqlConnection(con.CadenaSQL))
+                {
+                    var parametros = new DynamicParameters();
+                    parametros.Add("@IdFigura", objeto.IdFigura); // <--- Agregamos el ID
+                    parametros.Add("@IdTipo", objeto.IdTipo);
+                    parametros.Add("@Nombre", objeto.Nombre);
+                    parametros.Add("@ConfiguracionJSON", objeto.ConfiguracionJSON);
+                    parametros.Add("@Resultado", dbType: DbType.Int32, direction: ParameterDirection.Output);
+
+                    await conexion.ExecuteAsync("usp_EditarFigura", parametros, commandType: CommandType.StoredProcedure);
+
+                    int resultadoCodigo = parametros.Get<int>("@Resultado");
+                    response.Data = resultadoCodigo;
+
+                    if (resultadoCodigo == 1)
+                    {
+                        response.Estado = true;
+                        response.Valor = "success";
+                        response.Mensaje = "Editado correctamente.";
+                    }
+                    else if (resultadoCodigo == 2)
+                    {
+                        response.Mensaje = "El nombre ya se encuentra registrado en otra figura.";
+                    }
+                    else
+                    {
+                        response.Valor = "error";
+                        response.Mensaje = "Ocurrió un error en la base de datos al editar.";
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                response.Estado = false; response.Valor = "error"; response.Mensaje = "Error interno: " + ex.Message;
+            }
+
+            return response;
+        }
+
+        public async Task<Respuesta<int>> Eliminar(int id)
+        {
+            Respuesta<int> response = new()
+            {
+                Estado = false,
+                Valor = "warning",
+                Data = 0,
+                Mensaje = "Error desconocido"
+            };
+
+            try
+            {
+                using (var conexion = new SqlConnection(con.CadenaSQL))
+                {
+                    var parametros = new DynamicParameters();
+                    parametros.Add("@IdFigura", id);
+                    parametros.Add("@Resultado", dbType: DbType.Int32, direction: ParameterDirection.Output);
+
+                    await conexion.ExecuteAsync("usp_EliminarFigura", parametros, commandType: CommandType.StoredProcedure);
+
+                    int resultadoCodigo = parametros.Get<int>("@Resultado");
+                    response.Data = resultadoCodigo;
+
+                    if (resultadoCodigo == 1)
+                    {
+                        response.Estado = true;
+                        response.Valor = "success";
+                        response.Mensaje = "Figura eliminada correctamente.";
+                    }
+                    else
+                    {
+                        response.Valor = "error";
+                        response.Mensaje = "No se pudo eliminar la figura o no existe.";
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                response.Estado = false; response.Valor = "error"; response.Mensaje = "Error interno: " + ex.Message;
+            }
+
+            return response;
+        }
+
         public async Task<Respuesta<int>> Guardar(Figuras objeto)
         {
             // Sintaxis simplificada

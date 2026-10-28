@@ -6,7 +6,7 @@ const controlador = "Figuras";
 $(function () {
     // 1. Cargar el Select de Tipos de Juego
     obtenerTipoFiguras();
-    obtenerTipoFigurasPrueba();
+    //obtenerTipoFigurasPrueba();
 
     // 2. Inicializar DataTables
     tablaData = $('#tbData').DataTable({
@@ -31,6 +31,9 @@ $(function () {
                     return `
                         <button class="btn btn-primary btn-sm btn-editar" data-id="${data}" title="Editar">
                             <i class="fas fa-pencil-alt"></i>
+                        </button>
+                        <button class="btn btn-danger btn-sm btn-eliminar ms-1" data-id="${data}" title="Eliminar">
+                            <i class="fas fa-trash"></i>
                         </button>
                     `;
                 }
@@ -94,12 +97,247 @@ function obtenerTipoFiguras() {
         });
 }
 
-$("#btnNuevoReg").on("click", function () {
+$('#tbData tbody').on('click', '.btn-eliminar', function () {
+    let fila = $(this).closest('tr');
+    if (fila.hasClass('child')) fila = fila.prev();
+    let data = tablaData.row(fila).data();
 
-    idEditar = 0;
+    swal({
+        title: "¿Estás seguro?",
+        text: `Se eliminará la figura: ${data.nombre}`,
+        icon: "warning",
+        buttons: ["Cancelar", "Eliminar"],
+        dangerMode: true,
+    }).then((willDelete) => {
+        if (willDelete) {
+            // Hacemos el fetch enviando el ID en la URL
+            fetch(`/${controlador}/Eliminar?id=${data.idFigura}`, {
+                method: "DELETE"
+            })
+                .then(response => response.ok ? response.json() : Promise.reject(response))
+                .then(responseJson => {
+                    if (responseJson.estado) {
+                        swal("Eliminado!", responseJson.mensaje, "success");
+                        tablaData.ajax.reload();
+                    } else {
+                        swal("Error!", responseJson.mensaje, "warning");
+                    }
+                })
+                .catch(() => {
+                    swal("Error!", "No se pudo conectar con el servidor.", "error");
+                });
+        }
+    });
+});
+
+
+$('#tbData tbody').on('click', '.btn-editar', function () {
+    let fila = $(this).closest('tr');
+    if (fila.hasClass('child')) {
+        fila = fila.prev();
+    }
+    let data = tablaData.row(fila).data();
+
+    idEditar = data.idFigura;
+    $("#txtNombreFigura").val(data.nombre);
+
+    // 1. Limpiamos todos los checkboxes e inputs de los paneles por si quedaron sucios
+    $(".chk-coord, .chk-columna, .chk-fila").prop("checked", false);
+    $("#txtCantidadConteo").val(10);
+    $("#txtCantColumnas, #txtCantFilas").val(1);
+
+    // 2. Al cambiar el select, el evento "change" (que hicimos antes) mostrará el panel correcto automáticamente
+    $("#cboTipoJuego").val(data.idTipo).trigger("change");
+
+    // 3. Parseamos el JSON que viene de SQL Server
+    let configObj = JSON.parse(data.configuracionJSON);
+    let tipoTexto = $("#cboTipoJuego option:selected").text().toLowerCase().trim();
+
+    // 4. Llenamos el panel correspondiente con los datos
+    if (tipoTexto === "coordenadas" && configObj.coordenadas) {
+        configObj.coordenadas.forEach(c => {
+            // Buscamos el checkbox exacto usando sus atributos data y lo marcamos
+            // c[0] es la Letra (ej: "B"), c[1] es el número (ej: 0)
+            $(`.chk-coord[data-col='${c[0]}'][data-row='${c[1]}']`).prop("checked", true);
+        });
+    }
+    else if (tipoTexto === "conteo" && configObj.cantidadObjetivo) {
+        $("#txtCantidadConteo").val(configObj.cantidadObjetivo);
+    }
+    else if (tipoTexto === "n_columnas" && configObj.columnasValidas) {
+        configObj.columnasValidas.forEach(col => {
+            $(`.chk-columna[value='${col}']`).prop("checked", true);
+        });
+        $("#txtCantColumnas").val(configObj.cantidadRequerida);
+    }
+    else if (tipoTexto === "n_filas" && configObj.filasValidas) {
+        configObj.filasValidas.forEach(filaNum => {
+            $(`.chk-fila[value='${filaNum}']`).prop("checked", true);
+        });
+        $("#txtCantFilas").val(configObj.cantidadRequerida);
+    }
 
     $("#modalFigura").modal("show");
-})
+});
+
+$("#btnNuevoReg").on("click", function () {
+    // 1. Reiniciar variables de control
+    idEditar = 0;
+
+    // 2. Limpiar campos principales
+    $("#txtNombreFigura").val("");
+
+    // 3. Reiniciar el select y forzar el evento "change" para que oculte cualquier panel que haya quedado abierto
+    $("#cboTipoJuego").val("").trigger("change");
+
+    // 4. Limpiar todos los checkboxes del cartón y de las opciones de filas/columnas
+    $(".chk-coord, .chk-columna, .chk-fila").prop("checked", false);
+
+    // 5. Restaurar los valores por defecto de los inputs numéricos
+    $("#txtCantidadConteo").val(10);
+    $("#txtCantColumnas").val(1);
+    $("#txtCantFilas").val(1);
+
+    // 6. Finalmente, abrir el modal impecable
+    $("#modalFigura").modal("show");
+});
+
+$("#btnPruebaAlert").on("click", function () {
+    ConfirmarAccion("Eliminar Cartón", "Es una prueba de alerta confirmacion", "Eliminar", () => {
+        MensajeToast("Hecho", "Cartón eliminado.", "success");
+    });
+});
+
+function habilitarBoton() {
+    $('#btnGuardar').prop('disabled', false);
+}
+
+$("#btnGuardar").on("click", function () {
+
+    $('#btnGuardar').prop('disabled', true);
+
+    let idTipoSeleccionado = $("#cboTipoJuego").val();
+
+    if ($("#txtNombreFigura").val().trim() === "") {
+        MensajeToast("Campo incompleto", "Debe Ingresar Nombre.", "warning");
+        habilitarBoton();
+        return;
+    }
+
+    if (idTipoSeleccionado === "") {
+        MensajeToast("Campo incompleto", "Debe seleccionar un tipo de Juego.", "warning");
+        habilitarBoton();
+        return;
+    }
+
+    let tipoTexto = $("#cboTipoJuego option:selected").text().toLowerCase().trim();
+    let configObj = {}; // Aquí armaremos el JSON según el tipo
+
+    if (tipoTexto === "coordenadas") {
+        let coords = [];
+        // Recorremos todos los checkboxes del cartón que estén marcados
+        $(".chk-coord:checked").each(function () {
+            coords.push([$(this).data("col"), parseInt($(this).data("row"))]);
+        });
+
+        if (coords.length === 0) {
+            MensajeToast("Faltan datos", "Debe marcar al menos una casilla en el cartón.", "warning");
+            habilitarBoton(); return;
+        }
+        configObj = { coordenadas: coords };
+    }
+    else if (tipoTexto === "conteo") {
+        let cant = parseInt($("#txtCantidadConteo").val());
+        if (isNaN(cant) || cant <= 0) {
+            MensajeToast("Faltan datos", "Ingrese una cantidad válida para el conteo.", "warning");
+            habilitarBoton(); return;
+        }
+        configObj = { cantidadObjetivo: cant };
+    }
+    else if (tipoTexto === "n_columnas") {
+        let cols = [];
+        $(".chk-columna:checked").each(function () { cols.push($(this).val()); });
+        let cant = parseInt($("#txtCantColumnas").val());
+
+        if (cols.length === 0 || isNaN(cant) || cant <= 0) {
+            MensajeToast("Faltan datos", "Seleccione columnas válidas y una cantidad requerida.", "warning");
+            habilitarBoton(); return;
+        }
+        configObj = { columnasValidas: cols, cantidadRequerida: cant };
+    }
+    else if (tipoTexto === "n_filas") {
+        let filas = [];
+        $(".chk-fila:checked").each(function () { filas.push(parseInt($(this).val())); });
+        let cant = parseInt($("#txtCantFilas").val());
+
+        if (filas.length === 0 || isNaN(cant) || cant <= 0) {
+            MensajeToast("Faltan datos", "Seleccione filas válidas y una cantidad requerida.", "warning");
+            habilitarBoton(); return;
+        }
+        configObj = { filasValidas: filas, cantidadRequerida: cant };
+    }
+
+    // Armamos el objeto final para C#
+    const objeto = {
+        IdFigura: idEditar,
+        IdTipo: parseInt(idTipoSeleccionado),
+        Nombre: $("#txtNombreFigura").val().trim(),
+        ConfiguracionJSON: JSON.stringify(configObj)
+    };
+
+    $("#modalFigura").find("div.modal-content").LoadingOverlay("show");
+
+    if (idEditar != 0) {
+
+        fetch(`/${controlador}/Editar`, {
+            method: "PUT",
+            headers: { 'Content-Type': 'application/json;charset=utf-8' },
+            body: JSON.stringify(objeto)
+        })
+            .then(response => response.ok ? response.json() : Promise.reject(response))
+            .then(responseJson => {
+                if (responseJson.estado) {
+                    alertaTimer("Mensaje", responseJson.mensaje, "success");
+                    $("#modalFigura").modal("hide");
+                    idEditar = 0;
+                    tablaData.ajax.reload();
+                } else {
+                    alertaTimer("Error!", responseJson.mensaje, "warning");
+                }
+            })
+            .catch(() => {
+                swal("Error!", "No se pudo conectar con el servidor.", "warning");
+            })
+            .finally(() => {
+                $("#modalFigura").find("div.modal-content").LoadingOverlay("hide");
+                habilitarBoton();
+            });
+    } else {
+        fetch(`/${controlador}/Guardar`, {
+            method: "POST",
+            headers: { 'Content-Type': 'application/json;charset=utf-8' },
+            body: JSON.stringify(objeto)
+        })
+            .then(response => response.ok ? response.json() : Promise.reject(response))
+            .then(responseJson => {
+                if (responseJson.estado) {
+                    alertaTimer("Mensaje", responseJson.mensaje, "success");
+                    $("#modalFigura").modal("hide");
+                    tablaData.ajax.reload();
+                } else {
+                    alertaTimer("Error!", responseJson.mensaje, "warning");
+                }
+            })
+            .catch(() => {
+                alertaTimer("Error!", "No se pudo conectar con el servidor.", "warning");
+            })
+            .finally(() => {
+                $("#modalFigura").find("div.modal-content").LoadingOverlay("hide");
+                habilitarBoton();
+            });
+    }
+});
+
 
 function obtenerTipoFigurasPrueba() {
     fetch(`/${controlador}/ListaTipoJuegoDapper`, {

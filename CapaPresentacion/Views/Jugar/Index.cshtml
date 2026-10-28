@@ -7,8 +7,278 @@
     <link href="~/assets/css/bingoimperial.css" rel="stylesheet" />
 }
 
-<h2>Bienvenido al Juego</h2>
+<div class="row">
+    <div class="col-xl-3">
+
+        <!-- Panel Tablero de Control -->
+        <div class="panel panel-inverse">
+            <div class="panel-body text-center p-2">
+
+                <div class="d-flex justify-content-between mb-3 px-2">
+                    <button type="button" id="btnAtras" class="btn btn-danger btn-sm"><i class="fa fa-undo me-1"></i>Deshacer</button>
+                    <button type="button" id="btnNuevoJuego" class="btn btn-lime btn-sm"><i class="fa fa-sync me-1"></i>Reiniciar</button>
+                </div>
+
+                <h6 class="fw-bold text-dark border-bottom pb-2 mb-3">Tablero de Control</h6>
+
+                <!-- Aquí se inyectará la tabla dinámica con los 75 números -->
+                <div id="tableroControlNumeros" class="d-flex justify-content-center"></div>
+
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-9">
+
+        <div class="panel panel-inverse">
+            <div class="panel-heading">
+                <h4 class="panel-title"><i class="fa fa-star me-2"></i>Configuración y Ganadores</h4>
+                <div class="panel-heading-btn">
+                    <a href="javascript:;" class="btn btn-xs btn-icon btn-warning" data-toggle="panel-collapse"><i class="fa fa-minus"></i></a>
+                </div>
+            </div>
+            <div class="panel-body">
+
+                <!-- BOTONERA PRINCIPAL -->
+                <div class="d-flex gap-2 mb-3 border-bottom pb-3">
+                    <button type="button" class="btn btn-primary btn-sm fw-bold" id="btnAddCarton">
+                        <i class="fa fa-plus me-1"></i> Agregar Cartón
+                    </button>
+                    <button type="button" class="btn btn-indigo btn-sm" data-bs-toggle="modal" data-bs-target="#modalConfigurarFiguras">
+                        <i class="fa fa-cogs me-1"></i> Configurar Jugadas del Día
+                    </button>
+                    <button type="button" class="btn btn-danger btn-sm fw-bold" id="btnFinalizarBingo">
+                        <i class="fa fa-power-off me-1"></i> Finalizar el Juego
+                    </button>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <h6 class="mb-2 fw-bold text-dark border-bottom pb-2">
+                            <i class="fa fa-check-square text-muted me-1"></i>Figuras en Juego
+                        </h6>
+                        <div class="row" id="contenedorFiguras">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="row">
+                            <!-- Columna Cartones Llenos -->
+                            <div class="col-md-5">
+                                <h6 class="mb-2 fw-bold text-dark border-bottom pb-2">
+                                    <i class="fa fa-trophy text-warning me-1"></i>Cartones Llenos
+                                </h6>
+                                <!-- Contenedor con Scroll -->
+                                <div data-scrollbar="true" data-height="180px" class="overflow-hidden pe-2">
+                                    <div id="contCartonesLlenos"></div>
+                                </div>
+                            </div>
+
+                            <!-- Columna Figuras -->
+                            <div class="col-md-7 border-start">
+                                <h6 class="mb-2 fw-bold text-dark border-bottom pb-2">
+                                    <i class="fa fa-star text-theme me-1"></i>Cartones Figuras
+                                </h6>
+                                <!-- Contenedor con Scroll -->
+                                <div data-scrollbar="true" data-height="180px" class="overflow-hidden pe-2">
+                                    <div id="contFigurasGanadas"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Botones para eliminar cartones -->
+                <div class="d-flex flex-wrap gap-2 mb-2" id="listaCartonesBtn"></div>
+
+            </div>
+        </div>
+        <!-- panel cartones activos -->
+
+        <div class="panel panel-inverse">
+            <div class="panel-body bg-light">
+
+                <div data-scrollbar="true" data-height="360px" class="overflow-hidden">
+
+
+                    <!-- Contenedor de Cartones de Bingo -->
+                    <div class="row mx-0">
+                        <div class="col-xl-12 text-center">
+                            <div id="cartones">
+                                <p class="text-muted mt-3">Agrega cartones para comenzar a jugar.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="panel panel-inverse">
+            <div class="panel-body">
+
+                <div class="row">
+                    <div class="col-md-2">
+                        <h6 class="mb-2 fw-bold text-dark border-bottom pb-2">
+                            <i class="fa fa-bullhorn text-warning me-1"></i>Total:<span class="ms-1" id="lblTotalCantadas">--</span>
+                        </h6>
+
+                        <h6 class="mb-2 fw-bold text-dark border-bottom pb-2">
+                            <i class="fa fa-stopwatch text-theme me-1"></i>Ultimo:<span class="ms-1" id="lblUltimoNro">--</span>
+                        </h6>
+                    </div>
+                    <div class="col-md-10 border-start">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h6 class="mb-2 fw-bold text-dark border-bottom pb-2">
+                                    <i class="fa fa-trophy text-warning me-1"></i>Cartones Proximo al Bingo
+                                </h6>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="d-flex gap-4 pb-2">
+                                    <!-- Primer Badge -->
+                                    <div>
+                                        <span class="badge border border-danger text-danger px-2 pt-5px pb-5px rounded fs-12px d-inline-flex align-items-center">
+                                            <i class="fa fa-circle fs-9px fa-fw me-5px"></i>
+                                            <span id="lblToLlena">--</span> <!-- ID para el primer texto -->
+                                        </span>
+                                    </div>
+
+                                    <!-- Segundo Badge -->
+                                    <div>
+                                        <span class="badge border border-warning text-warning px-2 pt-5px pb-5px rounded fs-12px d-inline-flex align-items-center">
+                                            <i class="fa fa-circle fs-9px fa-fw me-5px"></i>
+                                            <span id="lblToFig">--</span> <!-- ID para el segundo texto -->
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="d-flex flex-wrap gap-2 mb-2" id="cartonesFiltro"></div>
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<div class="modal fade" id="modalConfigurarFiguras" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true"
+     data-bs-backdrop="static">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg">
+
+            <div class="modal-header bg-dark text-white">
+                <h5 class="modal-title fw-bold" id="exampleModalLabel">
+                    <i class="fas fa-list me-2"></i>Catálogo Completo de Figuras
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+            </div>
+
+            <div class="modal-body bg-light">
+
+                <div class="alert alert-info py-2 px-3 mb-3 border-0 shadow-sm fs-12px">
+                    <i class="fa fa-info-circle me-1"></i>Selecciona las <strong>figuras</strong> que estarán
+                    disponibles para jugar.
+                </div>
+
+                <!-- Aquí se inyecta el JSON completo -->
+                <div class="row" id="contenedorModalFiguras"></div>
+
+            </div>
+
+            <div class="modal-footer bg-white">
+                <button type="button" class="btn btn-danger shadow-sm" data-bs-dismiss="modal">
+                    <i class="fa fa-times me-1"></i>Cancelar
+                </button>
+                <button type="button" class="btn btn-indigo shadow-sm fw-bold" id="btnGuardarConfiguracion">
+                    <i class="fa fa-save me-1"></i>Guardar Menú
+                </button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<!-- Modal Agregar Cartón -->
+<div class="modal fade" id="modalAddCarton" tabindex="-1" aria-hidden="true" data-bs-backdrop="static">
+    <div class="modal-dialog modal-sm modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg">
+            <div class="modal-header bg-dark text-white">
+                <h5 class="modal-title fw-bold"><i class="fa fa-ticket-alt me-2"></i>Registrar Cartón</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body bg-light">
+                <div class="row mb-3">
+                    <div class="col-6">
+                        <label class="form-label fw-bold">Código *</label>
+                        <input type="text" class="form-control form-control-sm" id="nuevoCartonId" placeholder="Ej: 7345">
+                    </div>
+                    <div class="col-6">
+                        <label class="form-label fw-bold">Vendedor</label>
+                        <input type="text" class="form-control form-control-sm" id="nuevoCartonVendedor" placeholder="Opcional">
+                    </div>
+                </div>
+
+                <div class="d-flex justify-content-center">
+                    <div class="carton carton-input-mode shadow-sm">
+                        <h6 class="text-center">Ingresar Números</h6>
+                        <table>
+                            <thead>
+                                <tr><th>B</th><th>I</th><th>N</th><th>G</th><th>O</th></tr>
+                            </thead>
+                            <tbody>
+                                <!-- Usamos IDs específicos para extraerlos fácilmente en el JS -->
+                                <tr>
+                                    <td><input type="text" inputmode="numeric" maxlength="2" class="input-carton" id="inp_B0"></td>
+                                    <td><input type="text" inputmode="numeric" maxlength="2" class="input-carton" id="inp_I0"></td>
+                                    <td><input type="text" inputmode="numeric" maxlength="2" class="input-carton" id="inp_N0"></td>
+                                    <td><input type="text" inputmode="numeric" maxlength="2" class="input-carton" id="inp_G0"></td>
+                                    <td><input type="text" inputmode="numeric" maxlength="2" class="input-carton" id="inp_O0"></td>
+                                </tr>
+                                <tr>
+                                    <td><input type="text" inputmode="numeric" maxlength="2" class="input-carton" id="inp_B1"></td>
+                                    <td><input type="text" inputmode="numeric" maxlength="2" class="input-carton" id="inp_I1"></td>
+                                    <td><input type="text" inputmode="numeric" maxlength="2" class="input-carton" id="inp_N1"></td>
+                                    <td><input type="text" inputmode="numeric" maxlength="2" class="input-carton" id="inp_G1"></td>
+                                    <td><input type="text" inputmode="numeric" maxlength="2" class="input-carton" id="inp_O1"></td>
+                                </tr>
+                                <tr>
+                                    <td><input type="text" inputmode="numeric" maxlength="2" class="input-carton" id="inp_B2"></td>
+                                    <td><input type="text" inputmode="numeric" maxlength="2" class="input-carton" id="inp_I2"></td>
+                                    <td><i class="fa fa-star text-warning"></i></td>
+                                    <td><input type="text" inputmode="numeric" maxlength="2" class="input-carton" id="inp_G2"></td>
+                                    <td><input type="text" inputmode="numeric" maxlength="2" class="input-carton" id="inp_O2"></td>
+                                </tr>
+                                <tr>
+                                    <td><input type="text" inputmode="numeric" maxlength="2" class="input-carton" id="inp_B3"></td>
+                                    <td><input type="text" inputmode="numeric" maxlength="2" class="input-carton" id="inp_I3"></td>
+                                    <td><input type="text" inputmode="numeric" maxlength="2" class="input-carton" id="inp_N3"></td>
+                                    <td><input type="text" inputmode="numeric" maxlength="2" class="input-carton" id="inp_G3"></td>
+                                    <td><input type="text" inputmode="numeric" maxlength="2" class="input-carton" id="inp_O3"></td>
+                                </tr>
+                                <tr>
+                                    <td><input type="text" inputmode="numeric" maxlength="2" class="input-carton" id="inp_B4"></td>
+                                    <td><input type="text" inputmode="numeric" maxlength="2" class="input-carton" id="inp_I4"></td>
+                                    <td><input type="text" inputmode="numeric" maxlength="2" class="input-carton" id="inp_N4"></td>
+                                    <td><input type="text" inputmode="numeric" maxlength="2" class="input-carton" id="inp_G4"></td>
+                                    <td><input type="text" inputmode="numeric" maxlength="2" class="input-carton" id="inp_O4"></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer bg-white">
+                <button type="button" class="btn btn-danger shadow-sm" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-primary shadow-sm fw-bold" id="btnRegistrarCarton">Registrar Cartón</button>
+            </div>
+        </div>
+    </div>
+</div>
 
 @section Scripts {
-
+    <script src="~/js/JugarIndex.js"></script>
 }
