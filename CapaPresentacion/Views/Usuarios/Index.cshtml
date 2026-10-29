@@ -1,0 +1,103 @@
+﻿@{
+    ViewData["Title"] = "Usuarios";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section Estilos {
+    <link href="~/assets/plugins/datatables.net-bs5/css/dataTables.bootstrap5.min.css" rel="stylesheet" />
+    <link href="~/assets/plugins/datatables.net-responsive-bs5/css/responsive.bootstrap5.min.css" rel="stylesheet" />
+    <link href="~/assets/plugins/bootstrap-datepicker/dist/css/bootstrap-datepicker.css" rel="stylesheet" />
+}
+
+<div class="row">
+    <div class="col-xl-12">
+        <div class="panel panel-inverse">
+
+            <div class="panel-heading d-flex justify-content-between align-items-center">
+                <h4 class="panel-title"><i class="fa fa-users me-2"></i>Lista de Usuarios Registrados</h4>
+                <button type="button" class="btn btn-lime btn-sm fw-bold" id="btnNuevoUsuario">
+                    <i class="fa fa-plus me-1"></i>Nuevo Usuario
+                </button>
+            </div>
+
+            <div class="panel-body">
+                <div class="table-responsive">
+                    <table id="tbData" width="100%" class="table table-hover table-striped table-bordered align-middle text-nowrap text-center mb-0">
+                        <tbody>
+                            <!-- Llenado dinámicamente con JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="mdUsuario" tabindex="-1" aria-labelledby="modalUsuarioLabel" aria-hidden="true" data-bs-backdrop="static">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+
+            <div class="modal-header bg-inverse text-white">
+                <h5 class="modal-title" id="modalUsuarioLabel">
+                    <i class="fa fa-user-edit me-2"></i><span id="lblTituloModal">Nuevo Usuario</span>
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <div class="modal-body">
+
+                <div class="row mb-3">
+                    <div class="col-md-8">
+                        <label class="form-label fw-bold text-dark">Nombre Completo <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control model" id="txtNombres" name="NombreCompleto" placeholder="Nombres del usuario">
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label fw-bold text-dark">Celular <span class="text-danger">*</span></label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-white"><i class="fa fa-mobile-alt text-muted"></i></span>
+                            <input type="text" class="form-control model" name="Celular" id="txtCelular" placeholder="Ej: 71234567" maxlength="10">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-8">
+                        <label class="form-label fw-bold text-dark">Correo Electrónico <span class="text-danger">*</span></label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-white"><i class="fa fa-envelope text-muted"></i></span>
+                            <input type="email" class="form-control model" name="Correo" id="txtCorreo" placeholder="correo@ejemplo.com" maxlength="100">
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label fw-bold text-dark">Fecha <span class="text-danger">*</span></label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-white"><i class="fa fa-calendar text-muted"></i></span>
+                            <input type="text" class="form-control" name="Fecha" id="txtFecha" readonly style="cursor: pointer;">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">
+                    <i class="fa fa-times me-1"></i>Cancelar
+                </button>
+                <button type="button" class="btn btn-indigo" id="btnGuardarUsuario">
+                    <i class="fa fa-save me-1"></i>Guardar Cambios
+                </button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/assets/plugins/datatables.net/js/dataTables.min.js"></script>
+    <script src="~/assets/plugins/datatables.net-bs5/js/dataTables.bootstrap5.min.js"></script>
+    <script src="~/assets/plugins/datatables.net-responsive/js/dataTables.responsive.min.js"></script>
+    <script src="~/assets/plugins/datatables.net-responsive-bs5/js/responsive.bootstrap5.min.js"></script>
+    <script src="~/assets/plugins/bootstrap-datepicker/dist/js/bootstrap-datepicker.js"></script>
+    <script src="~/assets/plugins/bootstrap-datepicker/dist/locales/bootstrap-datepicker.es.min.js"></script>
+    <script src="~/js/UsuariosIndex.js"></script>
+}

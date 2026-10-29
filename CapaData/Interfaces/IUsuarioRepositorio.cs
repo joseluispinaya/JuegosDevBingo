@@ -1,12 +1,14 @@
 ﻿using CapaEntidades;
+using CapaEntidades.DTO;
 using CapaEntidades.Responses;
 
 namespace CapaData.Interfaces
 {
     public interface IUsuarioRepositorio
     {
-        Task<Respuesta<Usuarios>> Login(string correo);
-        Task<Respuesta<List<Usuarios>>> Lista();
+        Task<Respuesta<UsuarioLoginDTO>> Login(string correo);
+        Task<Respuesta<List<UsuariosListDTO>>> ListaDapper();
+        Task<Respuesta<List<UsuariosListDTO>>> Lista();
         Task<Respuesta<int>> Guardar(Usuarios objeto);
         Task<Respuesta<int>> Editar(Usuarios objeto);
         Task<Respuesta<int>> ActualizarClave(int idUsuario, string nuevaClave);
