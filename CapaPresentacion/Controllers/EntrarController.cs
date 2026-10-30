@@ -20,6 +20,23 @@ namespace CapaPresentacion.Controllers
 
         public IActionResult Login()
         {
+            // Verificamos de forma segura que Identity exista antes de preguntar si está autenticado
+            //if (User.Identity?.IsAuthenticated == true) Verificamos de forma segura si el usuario ya tiene una sesión activa
+
+            if (User.Identity is not null && User.Identity.IsAuthenticated)
+            {
+                // string? idRol = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role)?.Value;
+
+                // return idRol switch
+                // {
+                //     "1" => RedirectToAction("Index", "Usuarios"),
+                //     "2" => RedirectToAction("Index", "Jugar"),
+                //     _ => RedirectToAction("Index", "Home")
+                // };
+
+                return RedirectToAction("Index", "Home");
+            }
+
             return View();
         }
 
@@ -66,12 +83,13 @@ namespace CapaPresentacion.Controllers
                 return View();
             }
 
-            // Crear Claims
+            // Crear Claims new Claim(ClaimTypes.Email, objUsuario.Correo),
             List<Claim> claims =
             [
                 new Claim(ClaimTypes.NameIdentifier, objUsuario.IdUsuario.ToString()),
                 new Claim(ClaimTypes.Name, objUsuario.NombreCompleto),
-                new Claim("Correo", objUsuario.Correo),
+                new Claim(ClaimTypes.Email, objUsuario.Correo),
+                //new Claim("Correo", objUsuario.Correo),
                 new Claim(ClaimTypes.Role, objUsuario.IdRol.ToString())
             ];
 
@@ -95,6 +113,15 @@ namespace CapaPresentacion.Controllers
 
             return RedirectToAction("Index", "Home");
 
+        }
+
+        public async Task<IActionResult> Salir()
+        {
+            // Destruye la cookie de sesión autenticada
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+
+            // Redirecciona al Login
+            return RedirectToAction("Login", "Entrar");
         }
     }
 }

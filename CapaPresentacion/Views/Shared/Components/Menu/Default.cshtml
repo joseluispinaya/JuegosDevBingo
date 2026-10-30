@@ -1,0 +1,70 @@
+﻿@using CapaPresentacion.Models
+@model UserVM
+
+<!-- BEGIN menu -->
+<div class="menu">
+
+    <!-- Visible para ambos (Admin 1 y Cliente 2) -->
+    @if (Model.IdRol == "1" || Model.IdRol == "2")
+    {
+        <div class="menu-item">
+            <a asp-controller="DashBoard" asp-action="Index" class="menu-link">
+                <div class="menu-icon"><i class="fab fa-simplybuilt"></i></div>
+                <div class="menu-text">DashBoard</div>
+            </a>
+        </div>
+    }
+
+    <!-- Visible solo para Administrador (1) -->
+    @if (Model.IdRol == "1")
+    {
+        <div class="menu-item">
+            <a asp-controller="Usuarios" asp-action="Index" class="menu-link">
+                <div class="menu-icon"><i class="fa fa-users"></i></div>
+                <div class="menu-text">Usuarios</div>
+            </a>
+        </div>
+
+        <div class="menu-item">
+            <a asp-controller="Figuras" asp-action="Index" class="menu-link">
+                <div class="menu-icon"><i class="fa fa-calendar"></i></div>
+                <div class="menu-text">Crear Figura</div>
+            </a>
+        </div>
+    }
+
+    <!-- Visible solo para Cliente (2) -->
+    @if (Model.IdRol == "2")
+    {
+        <div class="menu-item has-sub">
+            <a href="javascript:;" class="menu-link">
+                <div class="menu-icon"><i class="fa fa-star"></i></div>
+                <div class="menu-text">Tutorial</div>
+                <div class="menu-caret"></div>
+            </a>
+            <div class="menu-submenu">
+                <div class="menu-item">
+                    <a href="#" class="menu-link"><div class="menu-text">Ver figuras</div></a>
+                </div>
+                <div class="menu-item">
+                    <a href="#" class="menu-link"><div class="menu-text">Como jugar</div></a>
+                </div>
+            </div>
+        </div>
+
+        <div class="menu-item">
+            <a asp-controller="Jugar" asp-action="Index" class="menu-link">
+                <div class="menu-icon"><i class="fa fa-calendar"></i></div>
+                <div class="menu-text">Jugar Bingo</div>
+            </a>
+        </div>
+    }
+
+    <!-- Controles de navegación -->
+    <div class="menu-item menu-control menu-control-start">
+        <a href="javascript:;" class="menu-link" data-toggle="app-top-menu-prev"><i class="fa fa-angle-left"></i></a>
+    </div>
+    <div class="menu-item menu-control menu-control-end">
+        <a href="javascript:;" class="menu-link" data-toggle="app-top-menu-next"><i class="fa fa-angle-right"></i></a>
+    </div>
+</div>

@@ -44,8 +44,9 @@
 			<!-- END navbar-header -->
 			<!-- BEGIN header-nav -->
 			<div class="navbar-nav">
+				@await Component.InvokeAsync("MenuUsuario")
 
-				<div class="navbar-item navbar-user dropdown">
+				@* <div class="navbar-item navbar-user dropdown">
 					<a href="#" class="navbar-link dropdown-toggle d-flex align-items-center" data-bs-toggle="dropdown">
 						<img src="~/assets/img/user/user-13.jpg" alt="" />
 						<span>
@@ -58,15 +59,15 @@
 						<div class="dropdown-divider"></div>
 						<a href="javascript:;" class="dropdown-item">Salir</a>
 					</div>
-				</div>
+				</div> *@
 			</div>
 			<!-- END header-nav -->
 		</div>
 		<!-- END #header -->
 		<!-- BEGIN #top-menu -->
 		<div id="top-menu" class="app-top-menu" data-bs-theme="dark">
-			<!-- BEGIN menu -->
-			<div class="menu">
+			@await Component.InvokeAsync("Menu")
+			@* <div class="menu">
 
 				<div class="menu-item">
 					<a asp-controller="DashBoard" asp-action="Index" class="menu-link">
@@ -141,8 +142,7 @@
 				<div class="menu-item menu-control menu-control-end">
 					<a href="javascript:;" class="menu-link" data-toggle="app-top-menu-next"><i class="fa fa-angle-right"></i></a>
 				</div>
-			</div>
-			<!-- END menu -->
+			</div> *@
 		</div>
 		<!-- END #top-menu -->
 		<!-- BEGIN #content -->

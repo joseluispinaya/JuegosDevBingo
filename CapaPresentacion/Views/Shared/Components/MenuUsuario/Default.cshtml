@@ -1,0 +1,16 @@
+﻿<div class="navbar-item navbar-user dropdown">
+    <a href="#" class="navbar-link dropdown-toggle d-flex align-items-center" data-bs-toggle="dropdown">
+        <img src="~/assets/img/user/user-13.jpg" alt="Foto de Perfil" />
+        <span>
+            <span class="d-none d-md-inline">@ViewData["nombreCompleto"]</span>
+            <b class="caret"></b>
+        </span>
+    </a>
+    <div class="dropdown-menu dropdown-menu-end me-1">
+        <a href="javascript:;" class="dropdown-item">Mi Perfil</a>
+        <span class="dropdown-item text-muted" style="font-size: 11px;">@ViewData["correoUsuario"]</span>
+        <div class="dropdown-divider"></div>
+
+        <a class="dropdown-item" asp-controller="Entrar" asp-action="Salir">Salir</a>
+    </div>
+</div>

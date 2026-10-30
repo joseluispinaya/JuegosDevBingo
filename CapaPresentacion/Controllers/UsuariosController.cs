@@ -2,11 +2,13 @@
 using CapaEntidades;
 using CapaEntidades.Responses;
 using CapaPresentacion.Helpers;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Globalization;
 
 namespace CapaPresentacion.Controllers
 {
+    [Authorize(Roles = "1")] // Protege TODO el controlador automáticamente
     public class UsuariosController : Controller
     {
         private readonly IUsuarioRepositorio _repositorio;
